@@ -14,7 +14,7 @@ We will use [`stringr`](https://stringr.tidyverse.org/) for wrangling the text d
 Another popular package for text analysis is `tidytext`. This is a `tidy` approach to text mining. A [free textbook](https://www.tidytextmining.com/) about using `tidytext` for text mining is available online, as well as an [introduction vignette.](https://cran.r-project.org/web/packages/tidytext/vignettes/tidytext.html)
 :::
 
-![Typical Text Analysis Workflow (Source: [Text Mining with R: A Tidy Approach](https://www.tidytextmining.com/tidytext))](textanal_workflow.png){.lightbox}
+![Typical Text Analysis Workflow (Source: [Text Mining with R: A Tidy Approach](https://www.tidytextmining.com/tidytext))](/assets/textanal_workflow.png){.lightbox}
 
 We will first explore what text data is, how to pre-process text data, and how to conduct basic text data analysis. But first, let's load the packages.
 
@@ -63,6 +63,7 @@ class(words)
 
 ::: callout-note
 Refresher: You can concatenate numbers and strings together, but the numbers will become characters and will not be treated as numeric variable. See below how 1, 2 becomes "1", "2"
+
 ```{r}
 mixed <- c(1, 2, "four", "five")
 print(mixed)
@@ -104,7 +105,6 @@ The `stringr` package comes with a wide variety of functions that is highly usef
 | Convert to lowercase/uppercase          | `tolower`(s) / `toupper`(s) |
 | Find s1 and replace by s2               | `str_replace`(s, s1, s2)    |
 | Trims repeated whitespaces to one space | `str_squish`(s)             |
-
 
 ```{r}
 text <- "  <p><h1>Digital Advertising:</h1> learn Traditional and Digital Ad.  </p>"
@@ -156,7 +156,7 @@ pride_txt <- prideprejudice
 head(pride_txt, 20)
 ```
 
-1. Use `stringr` to convert the `pride_txt` to lower case. Use `head` function to inspect the first several observations.
+1.  Use `stringr` to convert the `pride_txt` to lower case. Use `head` function to inspect the first several observations.
 
 ```{r}
 #| code-fold: true
@@ -168,7 +168,7 @@ lowertxt <- tolower(pride_txt)
 head(lowertxt, 50)
 ```
 
-2. Use `stringr` to replace "mr." with "mr". Inspect the difference. Use `head` function to make it manageable.
+2.  Use `stringr` to replace "mr." with "mr". Inspect the difference. Use `head` function to make it manageable.
 
 ```{r}
 #| code-fold: true
@@ -207,6 +207,7 @@ In `quanteda` packages, `tokens()` function is used for tokenization. This funct
 text <- "Watch your speed while driving in monsoon weather!"
 tokens(text)
 ```
+
 You can also tokenize a vector of strings.
 
 ```{r}
@@ -214,6 +215,7 @@ texts <- c("Watch your speed while driving in monsoon weather!",
            "Winter is coming")
 tokens(texts)
 ```
+
 As we can see here, `tokens()` retains everything, including the exclamation mark, by default. When we analyze text in large scale, we usually don't want to analyze noise caused by punctuation marks or filler words that do not carry meaning. `tokens()` offer several arguments that are useful in filtering out some of these noises. Some of these common noises we want to discard include **punctuation, numbers, symbol, hyphens, etc.**
 
 ```{r}
@@ -226,12 +228,15 @@ texts <- c(
 tokens(texts)
 
 ```
+
 ```{r}
 tokens(texts, remove_numbers = TRUE, remove_punct = TRUE)
 ```
+
 ```{r}
 tokens(texts, remove_numbers = FALSE, remove_punct = TRUE)
 ```
+
 ```{r}
 tokens(texts,
        remove_numbers = TRUE,
@@ -253,6 +258,7 @@ head(stopwords("korean", source = "marimo"), 20)
 ```
 
 To delete the stopwords, we can use `tokens_select()` with the following arguments.
+
 ```{r}
 # Save the tokenized item
 txt_tokens <- tokens(texts,
@@ -284,7 +290,7 @@ tokens(txt) %>%
 
 You notice that this made the overall number of tokens gets smaller and manageable. However, you also notice that "ate" was not collapsed into the "eat" stem. To do this, we need a more advanced approach called **lemmatization**. It is better at finding meaningful words/representation, but is computationally expensive. See below for the comparison.
 
-| **Stemming**   | **Lemmatization**|
+| **Stemming** | **Lemmatization** |
 |--------------------------------------|----------------------------------|
 | Stemming is a process that stems or removes last few characters from a word, often leading to incorrect meanings and spelling. | Lemmatization considers the context and converts the word to its meaningful base form, which is called Lemma. |
 | Example: stemming the word 'Caring' would return 'Car'. | Example: lemmatizing the word 'Caring' would return 'Care'. |
@@ -307,16 +313,18 @@ corp <- corpus(data_corpus_inaugural) # read in a built-in corpus available in q
 # this is a US presidential inaugural address texts
 head(corp)
 ```
+
 ```{r}
 class(corp)
 ```
+
 ```{r}
 summary(corp) %>% head()
 ```
 
 # Document-Feature Matrix (DFM)
 
-A **document-feature matrix (DFM)** or document-term matrix transforms a corpus into a matrix or table, where each row represents a document, each column represents a term (word), and the numbers in each cell show how often that word occurs in that document. The word "feature" or "term" simply refers to the unit of analysis being counted. Note that this process removes the order of the words. This approach of not considering the order of words is considered a [**bag-of-word**](https://en.wikipedia.org/wiki/Bag-of-words_model) strategy. Although we lose some information related to words in orders, this makes it easier to identify commonly used keywords and pattern-recognition tasks. 
+A **document-feature matrix (DFM)** or document-term matrix transforms a corpus into a matrix or table, where each row represents a document, each column represents a term (word), and the numbers in each cell show how often that word occurs in that document. The word "feature" or "term" simply refers to the unit of analysis being counted. Note that this process removes the order of the words. This approach of not considering the order of words is considered a [**bag-of-word**](https://en.wikipedia.org/wiki/Bag-of-words_model) strategy. Although we lose some information related to words in orders, this makes it easier to identify commonly used keywords and pattern-recognition tasks.
 
 In `quanteda` you can create a DFM using `dfm()` function. `dfm()` function takes in tokenized objects. Let's look at an example.
 
@@ -335,8 +343,8 @@ corp_dfm <- dfm(tok_corp_stopword)
 corp_dfm
 
 ```
-We can see that the `dfm` consists of 59 documents (i.e., rows) and 5,451 features (i.e., columns). 5,451 features indicate that there are 5,451 unique words in the data. Usually `dfm` is very sparse (i.e., a LOT of empty cells) because most words do not appear in most of the documents.
 
+We can see that the `dfm` consists of 59 documents (i.e., rows) and 5,451 features (i.e., columns). 5,451 features indicate that there are 5,451 unique words in the data. Usually `dfm` is very sparse (i.e., a LOT of empty cells) because most words do not appear in most of the documents.
 
 ## Practice 2
 
@@ -433,16 +441,13 @@ corpus_subset(data_corpus_inaugural,
   textplot_wordcloud(comparison = TRUE)
 ```
 
-
-
-
 ### Practice 3
 
 Let's practice and conduct the frequency analysis and create wordcloud visualizations. We will use the iPhone DFM we created before. Please try to do the follwoing:
 
-* Create a crosstab summarizing the frequencies of words.
-* Create a word cloud
-* Create a word cloud wiht a grouping variable: Country
+-   Create a crosstab summarizing the frequencies of words.
+-   Create a word cloud
+-   Create a word cloud wiht a grouping variable: Country
 
 ```{r}
 #| code-fold: true
@@ -475,23 +480,23 @@ corpus_subset(iphone_corpus,
 
 **What issues do you see??**
 
-
 # Practice - TikTok Data
 
 Let's try to go through all the process by ourselves using a social media dataset. This dataset contains some information about TikTok videos posted by news organizations.
 
 Conduct the following:
 
-* Construct a `quanteda` corpus
-* Pre-process: Tokenize, lower-case, stemming, stopword deletion
-* Convert to a DFM
-* Find out the most frequent words
-* Create a word cloud visualization
+-   Construct a `quanteda` corpus
+-   Pre-process: Tokenize, lower-case, stemming, stopword deletion
+-   Convert to a DFM
+-   Find out the most frequent words
+-   Create a word cloud visualization
 
 ```{r}
 # Importing data
 tiktok_dat <- read_csv("https://raw.githubusercontent.com/jwrchoi/nlp_workshop_beacon/refs/heads/main/tiktok_sample.csv")
 ```
+
 ```{r}
 #| code-fold: true
 #| output: false
@@ -529,7 +534,4 @@ america_kwic <- kwic(corp,
 head(america_kwic)
 ```
 
-
 We explored some very basic operations involved in computational text analysis. Next step would be to explore additional analysis on text to investigate polarity, valence, or topics using sentiment analysis or topic modeling. If you want to explore more about conducting sentiment analysis using `quanteda` check out the [`quanteda.sentiment`](https://rdrr.io/github/quanteda/quanteda.sentiment/f/vignettes/sentiment_analysis.Rmd) extension.
-
-
